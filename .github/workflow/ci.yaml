@@ -19,14 +19,17 @@ jobs:
     - name: Install Clang
       run: sudo apt-get install -y clang lcov
 
-  - name: Set up Google Test
-    run: |
-      sudo apt-get install -y libgtest-dev
-      mkdir -p /usr/src/googletest/googletest/build
-      cd /usr/src/googletest/googletest/build
-      sudo cmake ..
-      sudo make
-      sudo cp /usr/src/googletest/googletest/build/CMakeFiles/gtest.dir/lib/*.a /usr/lib/
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev cmake
+
+    - name: Build Google Test
+      run: |
+        cd /usr/src/gtest
+        sudo cmake .
+        sudo make
+        sudo cp *.a /usr/lib
 
     - name: Build with CMake and Clang
       run: |
