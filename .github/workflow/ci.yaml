@@ -1,6 +1,12 @@
 name: Coverage Report
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main  # or your target branch
+  pull_request:
+    branches:
+      - main  # or your target branch
 
 jobs:
   build-and-test:
