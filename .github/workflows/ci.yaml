@@ -16,8 +16,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install Clang
-      run: sudo apt-get install -y clang lcov
+    - name: Install Clang and LLVM tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang llvm lcov
 
     - name: Set up Google Test
       run: |
