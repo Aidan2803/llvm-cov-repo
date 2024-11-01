@@ -1,0 +1,49 @@
+name: Coverage Report
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Clang
+      run: sudo apt-get install -y clang lcov
+
+    - name: Set up Google Test
+      run: |
+        sudo apt-get install -y libgtest-dev
+        cd /usr/src/gtest
+        sudo cmake .
+        sudo make
+        sudo cp *.a /usr/lib
+
+    - name: Build with CMake and Clang
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        cmake --build build
+
+    - name: Run main program and tests
+      run: |
+        cd build
+        LLVM_PROFILE_FILE="main_program.profraw" ./my_program
+        LLVM_PROFILE_FILE="tests.profraw" ./tests
+
+    - name: Merge coverage data
+      run: |
+        cd build
+        llvm-profdata merge -sparse -output=coverage.profdata main_program.profraw tests.profraw
+
+    - name: Generate HTML coverage report
+      run: |
+        cd build
+        llvm-cov show ./my_program -instr-profile=coverage.profdata -format=html -output-dir=coverage_report
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: build/coverage_report
