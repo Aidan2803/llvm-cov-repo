@@ -26,7 +26,7 @@ jobs:
         cd /usr/src/googletest/googletest/build
         sudo cmake ..
         sudo make
-        sudo cp lib/libgtest*.a /usr/lib/
+        sudo cp /usr/src/googletest/googletest/build/lib/libgtest*.a /usr/lib/
 
 
     - name: Build with CMake and Clang
